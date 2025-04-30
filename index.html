@@ -7,114 +7,23 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
     <style>
-        /* Apply the game font */
-        body, button, input, .game-font {
-            font-family: 'Press Start 2P', cursive;
-        }
-        /* Center canvas and ensure it doesn't overflow */
-        .game-container {
-            width: 100%;
-            max-width: 800px; /* Max width for the game area */
-            margin: 0 auto;
-            overflow: hidden; /* Prevent canvas overflow */
-        }
-        canvas {
-            display: block; /* Remove extra space below canvas */
-            background-color: #f7f7f7; /* Light grey background like Chrome's */
-            width: 100%; /* Make canvas width responsive */
-            border-bottom: 2px solid #535353; /* Ground line */
-            border-radius: 8px; /* Rounded corners */
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1); /* Subtle shadow */
-        }
-        /* Style buttons */
-        .game-button {
-            background-color: #4CAF50; /* Green background */
-            border: none;
-            color: white;
-            padding: 10px 20px;
-            text-align: center;
-            text-decoration: none;
-            display: inline-block;
-            font-size: 12px; /* Smaller font for game style */
-            margin: 4px 2px;
-            cursor: pointer;
-            border-radius: 8px; /* Rounded corners */
-            transition: background-color 0.3s ease;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-        }
-        .game-button:hover {
-            background-color: #45a049; /* Darker green on hover */
-        }
-        .game-button:active {
-            transform: translateY(1px); /* Button press effect */
-        }
-        /* Style for message overlay */
-        #messageOverlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
-            color: white;
-            display: flex; /* Use flexbox for centering */
-            flex-direction: column; /* Stack items vertically */
-            justify-content: center; /* Center vertically */
-            align-items: center; /* Center horizontally */
-            text-align: center;
-            z-index: 10; /* Ensure it's above the canvas */
-            padding: 20px;
-            border-radius: 8px; /* Match canvas */
-            pointer-events: none; /* Allow clicks to pass through initially */
-            opacity: 0; /* Hidden by default */
-            transition: opacity 0.3s ease;
-        }
-        #messageOverlay.visible {
-            opacity: 1;
-            pointer-events: auto; /* Enable interaction when visible */
-        }
-        /* Leaderboard styling */
-        #leaderboard {
-            background-color: #e0e0e0;
-            padding: 15px;
-            border-radius: 8px;
-            margin-top: 15px;
-            box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
-        }
-        #leaderboard h3 {
-            margin-bottom: 10px;
-            color: #333;
-        }
-        #leaderboard ul {
-            list-style: none;
-            padding: 0;
-            color: #555;
-        }
-         #leaderboard li {
-            padding: 5px 0;
-            border-bottom: 1px solid #ccc;
-         }
-         #leaderboard li:last-child {
-            border-bottom: none;
-         }
-         #leaderboard li span {
-             display: inline-block;
-             width: 50%;
-         }
-         #leaderboard li span:last-child {
-            text-align: right;
-            font-weight: bold;
-         }
-         /* Style for loading message */
-         #loadingMessage {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            color: #555;
-            font-size: 14px;
-            z-index: 5; /* Below overlay but above canvas */
-         }
+        /* Styles remain largely the same */
+        body, button, input, .game-font { font-family: 'Press Start 2P', cursive; }
+        .game-container { width: 100%; max-width: 800px; margin: 0 auto; overflow: hidden; }
+        canvas { display: block; background-color: #f7f7f7; width: 100%; border-bottom: 2px solid #535353; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .game-button { background-color: #4CAF50; border: none; color: white; padding: 10px 20px; text-align: center; text-decoration: none; display: inline-block; font-size: 12px; margin: 4px 2px; cursor: pointer; border-radius: 8px; transition: background-color 0.3s ease; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
+        .game-button:hover { background-color: #45a049; }
+        .game-button:active { transform: translateY(1px); }
+        #messageOverlay { position: absolute; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(0, 0, 0, 0.5); color: white; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; z-index: 10; padding: 20px; border-radius: 8px; pointer-events: none; opacity: 0; transition: opacity 0.3s ease; }
+        #messageOverlay.visible { opacity: 1; pointer-events: auto; }
+        #leaderboard { background-color: #e0e0e0; padding: 15px; border-radius: 8px; margin-top: 15px; box-shadow: inset 0 2px 4px rgba(0,0,0,0.1); }
+        #leaderboard h3 { margin-bottom: 10px; color: #333; }
+        #leaderboard ul { list-style: none; padding: 0; color: #555; }
+        #leaderboard li { padding: 5px 0; border-bottom: 1px solid #ccc; }
+        #leaderboard li:last-child { border-bottom: none; }
+        #leaderboard li span { display: inline-block; width: 50%; }
+        #leaderboard li span:last-child { text-align: right; font-weight: bold; }
+        #loadingMessage { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: #555; font-size: 14px; z-index: 5; }
     </style>
 </head>
 <body class="bg-gray-100 p-5 flex flex-col items-center min-h-screen">
@@ -160,50 +69,93 @@
         const canvas = document.getElementById('gameCanvas');
         const ctx = canvas.getContext('2d');
         const scoreDisplay = document.getElementById('score');
-        const highScoreDisplay = document.getElementById('highScore');
-        const guestScoreDisplay = document.getElementById('guestScore');
+        // ... (other DOM elements)
+        const loadingMessage = document.getElementById('loadingMessage');
         const messageOverlay = document.getElementById('messageOverlay');
         const messageText = document.getElementById('messageText');
         const restartButton = document.getElementById('restartButton');
+        // ... (auth/leaderboard elements)
+        const leaderboardList = document.getElementById('leaderboardList');
+        const highScoreDisplay = document.getElementById('highScore');
+        const guestScoreDisplay = document.getElementById('guestScore');
         const signInButton = document.getElementById('signInButton');
         const signUpButton = document.getElementById('signUpButton');
         const saveScoreButton = document.getElementById('saveScoreButton');
-        const leaderboardList = document.getElementById('leaderboardList');
-        const loadingMessage = document.getElementById('loadingMessage');
+
 
         // --- Game Configuration ---
         const fixedCanvasHeight = 250;
-        const dinoWidth = 40;
-        const dinoHeight = 50;
+        const dinoWidth = 40; // Collision box width
+        const dinoHeight = 50; // Collision box height
         const dinoCrouchHeight = 25;
         const dinoCrouchWidth = 45;
         const gravity = 0.6;
-        const fastFallGravityMultiplier = 3; // How much faster to fall when down is pressed mid-air
+        const fastFallGravityMultiplier = 3;
         const jumpStrength = -12;
         const groundHeight = 50;
 
-        // --- Image Loading ---
-        const dinoImgStanding = new Image();
-        const dinoImgCrouching = new Image();
-        const dinoStandingSrc = 'https://placehold.co/40x50/666/eee?text=Dino';
-        const dinoCrouchingSrc = 'https://placehold.co/45x25/666/eee?text=Duck';
-        const defaultGroundObstacleSrc = 'https://placehold.co/30x40/2a9d8f/eee?text=Obs';
-        const defaultFlyingObstacleSrc = 'https://placehold.co/50x30/e76f51/eee?text=Fly';
+        // --- Animation Configuration ---
+        const dinoRunAnim = {
+            src: 'https://placehold.co/120x50/666/eee?text=RunSheet', // Placeholder: 3 frames (40x50 each)
+            frameWidth: 40, frameHeight: 50, frameCount: 3, frameDelay: 5,
+        };
+        const dinoCrouchAnim = {
+            src: 'https://placehold.co/90x25/666/eee?text=CrouchSheet', // Placeholder: 2 frames (45x25 each)
+            frameWidth: 45, frameHeight: 25, frameCount: 2, frameDelay: 8,
+        };
 
+        // --- Image Loading ---
+        const dinoRunSheet = new Image();
+        const dinoCrouchSheet = new Image();
+        // ** MODIFIED: Obstacle Types with Animation Data **
         const obstacleTypes = [
-            { width: 20, height: 40, imgSrc: 'https://placehold.co/20x40/2a9d8f/eee?text=T' },
-            { width: 30, height: 30, imgSrc: 'https://placehold.co/30x30/2a9d8f/eee?text=S' },
-            { width: 45, height: 50, imgSrc: 'https://placehold.co/45x50/2a9d8f/eee?text=L' },
-            { width: 60, height: 35, imgSrc: 'https://placehold.co/60x35/2a9d8f/eee?text=W' },
-            { width: 25, height: 55, imgSrc: 'https://placehold.co/25x55/2a9d8f/eee?text=M' }, // Tallest ground obstacle
-            { count: 3, width: 15, height: 30, gap: 10, imgSrc: 'https://placehold.co/15x30/2a9d8f/eee?text=3' },
-            { width: 50, height: 30, flying: true, yOffset: 35, imgSrc: 'https://placehold.co/50x30/e76f51/eee?text=F1' },
-             // ** MODIFIED F2 Obstacle **
-            { width: 100, height: 25, flying: true, yOffset: 45, imgSrc: 'https://placehold.co/90x25/e76f51/eee?text=F2-LONG' }, // Longer and higher
+            // Ground obstacles (Cacti examples)
+            {   // Tall skinny
+                width: 20, height: 40, // Collision box
+                imgSrc: 'https://placehold.co/40x40/2a9d8f/eee?text=TSheet', // Spritesheet URL (e.g., 2 frames)
+                frameWidth: 20, frameHeight: 40, frameCount: 2, frameDelay: 10 // Animation details
+            },
+            {   // Small square
+                width: 30, height: 30,
+                imgSrc: 'https://placehold.co/60x30/2a9d8f/eee?text=SSheet',
+                frameWidth: 30, frameHeight: 30, frameCount: 2, frameDelay: 12
+            },
+            {   // Large cactus
+                width: 45, height: 50,
+                imgSrc: 'https://placehold.co/90x50/2a9d8f/eee?text=LSheet',
+                frameWidth: 45, frameHeight: 50, frameCount: 2, frameDelay: 9
+            },
+            {   // Wide short
+                width: 60, height: 35,
+                imgSrc: 'https://placehold.co/120x35/2a9d8f/eee?text=WSheet',
+                frameWidth: 60, frameHeight: 35, frameCount: 2, frameDelay: 11
+            },
+             {  // Tall medium width
+                width: 25, height: 55,
+                imgSrc: 'https://placehold.co/50x55/2a9d8f/eee?text=MSheet',
+                frameWidth: 25, frameHeight: 55, frameCount: 2, frameDelay: 10
+            },
+            {   // Three small cacti
+                count: 3, width: 15, height: 30, gap: 10, // Collision box per part
+                imgSrc: 'https://placehold.co/30x30/2a9d8f/eee?text=3Sheet', // Spritesheet for one small cactus
+                frameWidth: 15, frameHeight: 30, frameCount: 2, frameDelay: 13 // Animation details
+            },
+            // Flying obstacles (Bird examples)
+            {   // Flying 1
+                width: 50, height: 30, flying: true, yOffset: 35, // Collision box
+                imgSrc: 'https://placehold.co/100x30/e76f51/eee?text=F1Sheet', // Spritesheet URL (e.g., 2 frames)
+                frameWidth: 50, frameHeight: 30, frameCount: 2, frameDelay: 6 // Animation details
+            },
+            {   // Flying 2 (Longer)
+                width: 90, height: 25, flying: true, yOffset: 45,
+                imgSrc: 'https://placehold.co/180x25/e76f51/eee?text=F2LSheet',
+                frameWidth: 90, frameHeight: 25, frameCount: 2, frameDelay: 7
+            },
         ];
-        const obstacleImages = {};
+        const obstacleSpriteSheets = {}; // Store loaded spritesheet Image objects
 
         // --- Obstacle Timing/Speed ---
+        // ... (same as before)
         const obstacleSpeedStart = 5;
         const obstacleSpawnIntervalStart = 95;
         const obstacleSpawnIntervalMin = 55;
@@ -211,7 +163,9 @@
         const speedIncreaseFactor = 0.001;
         const spawnIntervalDecreaseFactor = 0.05;
 
+
         // --- Game State ---
+        // ... (most are same)
         let dinoY, dinoVelocityY;
         let score, highScore;
         let obstacles;
@@ -223,28 +177,33 @@
         let gameStarted = false;
         let isLoggedIn = false;
         let isCrouching = false;
-        let isFastFalling = false; // ** NEW: Track fast fall state **
+        let isFastFalling = false;
         let assetsLoaded = false;
+        let dinoCurrentFrame = 0;
+        let dinoFrameTimer = 0;
+
 
         // --- Asset Preloading Function ---
         function preloadAssets() {
             const promises = [];
-            const sourcesToLoad = new Set([dinoStandingSrc, dinoCrouchingSrc]);
-            obstacleTypes.forEach(type => sourcesToLoad.add(type.imgSrc)); // Add all obstacle sources
+            const sourcesToLoad = new Set([dinoRunAnim.src, dinoCrouchAnim.src]);
+            // Add all unique obstacle imgSrc URLs to the set
+            obstacleTypes.forEach(type => sourcesToLoad.add(type.imgSrc));
+
             sourcesToLoad.forEach(src => {
                 promises.push(new Promise((resolve, reject) => {
                     const img = new Image();
                     img.onload = () => {
-                        if (src === dinoStandingSrc) dinoImgStanding.src = src;
-                        else if (src === dinoCrouchingSrc) dinoImgCrouching.src = src;
-                        else obstacleImages[src] = img; // Store by src
+                        // Assign loaded images to correct variables/dictionary
+                        if (src === dinoRunAnim.src) dinoRunSheet.src = src;
+                        else if (src === dinoCrouchAnim.src) dinoCrouchSheet.src = src;
+                        else obstacleSpriteSheets[src] = img; // Store obstacle sheets by src
                         resolve();
                     };
                     img.onerror = () => { console.error(`Failed to load image: ${src}`); resolve(); };
                     img.src = src;
-                     // Assign src immediately for potential early draw calls
-                     if (src === dinoStandingSrc) dinoImgStanding.src = src;
-                     if (src === dinoCrouchingSrc) dinoImgCrouching.src = src;
+                     if (src === dinoRunAnim.src) dinoRunSheet.src = src;
+                     if (src === dinoCrouchAnim.src) dinoCrouchSheet.src = src;
                 }));
             });
             return Promise.all(promises);
@@ -252,144 +211,157 @@
 
 
         // --- Dino Object ---
-        const dino = {
+        const dino = { /* ... (no changes needed here) ... */
             x: 50,
             getCurrentWidth() { return isCrouching ? dinoCrouchWidth : dinoWidth; },
             getCurrentHeight() { return isCrouching ? dinoCrouchHeight : dinoHeight; },
             draw() {
-                const currentHeight = this.getCurrentHeight();
-                const currentWidth = this.getCurrentWidth();
-                const currentY = isCrouching ? canvas.height - currentHeight - groundHeight : dinoY;
-                const imgToDraw = isCrouching ? dinoImgCrouching : dinoImgStanding;
-                if (imgToDraw && imgToDraw.complete && imgToDraw.naturalWidth > 0) {
-                    ctx.drawImage(imgToDraw, this.x, currentY, currentWidth, currentHeight);
-                } else {
-                    ctx.fillStyle = '#666';
-                    ctx.fillRect(this.x, currentY, currentWidth, currentHeight);
-                }
+                const currentAnim = isCrouching ? dinoCrouchAnim : dinoRunAnim;
+                const currentSheet = isCrouching ? dinoCrouchSheet : dinoRunSheet;
+                const collisionBoxHeight = this.getCurrentHeight();
+                const collisionBoxWidth = this.getCurrentWidth();
+                const currentY = isCrouching ? canvas.height - collisionBoxHeight - groundHeight : dinoY;
+                const sx = dinoCurrentFrame * currentAnim.frameWidth;
+                const sy = 0;
+                if (currentSheet && currentSheet.complete && currentSheet.naturalWidth > 0) {
+                    const drawWidth = currentAnim.frameWidth; const drawHeight = currentAnim.frameHeight;
+                    const drawX = this.x + (collisionBoxWidth - drawWidth) / 2;
+                    const drawY = currentY + (collisionBoxHeight - drawHeight);
+                    ctx.drawImage( currentSheet, sx, sy, currentAnim.frameWidth, currentAnim.frameHeight, drawX, drawY, drawWidth, drawHeight );
+                } else { ctx.fillStyle = '#666'; ctx.fillRect(this.x, currentY, collisionBoxWidth, collisionBoxHeight); }
             },
-            jump() {
-                if (!isCrouching && dinoY >= canvas.height - this.getCurrentHeight() - groundHeight - 1) {
-                    dinoVelocityY = jumpStrength;
-                    isFastFalling = false; // Reset fast fall on jump
-                }
-            },
-            update() {
-                // Apply gravity - increase if fast falling
-                const currentGravity = isFastFalling ? gravity * fastFallGravityMultiplier : gravity;
-
-                // Apply gravity only if not crouching on the ground
-                if (!isCrouching || dinoY < canvas.height - this.getCurrentHeight() - groundHeight) {
-                    dinoVelocityY += currentGravity;
-                    dinoY += dinoVelocityY;
-                }
-
-                const currentHeight = this.getCurrentHeight();
-                // Ground collision
-                if (dinoY > canvas.height - currentHeight - groundHeight) {
-                    dinoY = canvas.height - currentHeight - groundHeight;
-                    dinoVelocityY = 0;
-                    isFastFalling = false; // Stop fast fall on ground hit
-                    // If down key is still held, stay crouched
-                    // isCrouching = ??? // Handled by keyup/keydown
-                }
-                // Ceiling collision (optional)
-                if (dinoY < 0) {
-                    dinoY = 0;
-                    dinoVelocityY = 0; // Stop upward movement if hitting ceiling
-                }
-            },
-            // ** MODIFIED: Handle Crouch / Fast Fall trigger **
-            handleDownAction() {
-                // Check if dino is in the air (not on the ground)
-                 if (dinoY < canvas.height - this.getCurrentHeight() - groundHeight - 1) {
-                    // If in air and not already fast falling, initiate fast fall
-                    if (!isFastFalling) {
-                         isFastFalling = true;
-                         // Optional: Give a small initial downward boost
-                         // dinoVelocityY = Math.max(dinoVelocityY, 1); // Ensure some downward speed
-                    }
-                 } else {
-                     // If on the ground, start crouching (if not already)
-                     if (!isCrouching) {
-                        isCrouching = true;
-                        isFastFalling = false; // Cannot be fast falling if starting crouch
-                     }
-                 }
-            },
-            // ** MODIFIED: Handle stopping crouch / fast fall **
-            handleUpAction() {
-                 // Stop crouching if currently crouching
-                 if (isCrouching) {
-                    isCrouching = false;
-                 }
-                 // Always stop fast falling when down arrow is released
-                 isFastFalling = false;
-            }
+            jump() { if (!isCrouching && dinoY >= canvas.height - this.getCurrentHeight() - groundHeight - 1) { dinoVelocityY = jumpStrength; isFastFalling = false; } },
+            update() { const currentGravity = isFastFalling ? gravity * fastFallGravityMultiplier : gravity; if (!isCrouching || dinoY < canvas.height - this.getCurrentHeight() - groundHeight) { dinoVelocityY += currentGravity; dinoY += dinoVelocityY; } const currentHeight = this.getCurrentHeight(); if (dinoY > canvas.height - currentHeight - groundHeight) { dinoY = canvas.height - currentHeight - groundHeight; dinoVelocityY = 0; isFastFalling = false; } if (dinoY < 0) { dinoY = 0; dinoVelocityY = 0; } },
+            handleDownAction() { if (dinoY < canvas.height - this.getCurrentHeight() - groundHeight - 1) { if (!isFastFalling) { isFastFalling = true; } } else { if (!isCrouching) { isCrouching = true; isFastFalling = false; dinoCurrentFrame = 0; dinoFrameTimer = 0; } } },
+            handleUpAction() { if (isCrouching) { isCrouching = false; dinoCurrentFrame = 0; dinoFrameTimer = 0; } isFastFalling = false; }
         };
 
         // --- Obstacle Functions ---
-        function createObstacle() { /* ... (no changes needed here) ... */
+        function createObstacle() {
             const typeIndex = Math.floor(Math.random() * obstacleTypes.length);
-            const selectedType = obstacleTypes[typeIndex];
+            const selectedType = obstacleTypes[typeIndex]; // Contains anim data now
+
             const count = selectedType.count || 1;
-            const width = selectedType.width;
-            const height = selectedType.height;
+            const width = selectedType.width; // Collision width
+            const height = selectedType.height; // Collision height
             const gap = selectedType.gap || 0;
             const isFlying = selectedType.flying || false;
             const yOffset = selectedType.yOffset || 0;
-            const imgSrc = selectedType.imgSrc;
+            const imgSrc = selectedType.imgSrc; // Spritesheet src
+
             let obstacleY;
-            if (isFlying) {
-                obstacleY = canvas.height - groundHeight - height - yOffset;
-                obstacleY = Math.max(0, obstacleY);
-            } else {
-                obstacleY = canvas.height - height - groundHeight;
-            }
-            const img = obstacleImages[imgSrc];
+            if (isFlying) { obstacleY = canvas.height - groundHeight - height - yOffset; obstacleY = Math.max(0, obstacleY); }
+            else { obstacleY = canvas.height - height - groundHeight; }
+
+            // Get the preloaded spritesheet
+            const sheet = obstacleSpriteSheets[imgSrc];
+
             for (let i = 0; i < count; i++) {
                 const obstacleX = canvas.width + i * (width + gap);
-                obstacles.push({ x: obstacleX, y: obstacleY, width: width, height: height, isFlying: isFlying, img: img, imgSrc: imgSrc });
+                obstacles.push({
+                    x: obstacleX, y: obstacleY,
+                    width: width, height: height, // Collision box
+                    isFlying: isFlying,
+                    sheet: sheet, // Store the loaded spritesheet Image object
+                    imgSrc: imgSrc, // Store src for reference
+                    // ** NEW: Add animation properties from type & initial state **
+                    frameWidth: selectedType.frameWidth,
+                    frameHeight: selectedType.frameHeight,
+                    frameCount: selectedType.frameCount,
+                    frameDelay: selectedType.frameDelay,
+                    currentFrame: 0, // Each obstacle starts at frame 0
+                    frameTimer: 0,   // Each obstacle has its own timer
+                });
             }
         }
 
-        function updateObstacles() { /* ... (no changes needed here) ... */
+        function updateObstacles() {
             const currentDinoHeight = dino.getCurrentHeight();
             const currentDinoWidth = dino.getCurrentWidth();
             const currentDinoY = isCrouching ? canvas.height - currentDinoHeight - groundHeight : dinoY;
+
             for (let i = obstacles.length - 1; i >= 0; i--) {
                 const obs = obstacles[i];
-                obs.x -= obstacleSpeed;
-                if (obs.img && obs.img.complete && obs.img.naturalWidth > 0) {
-                     const drawWidth = obs.width * 1.1; const drawHeight = obs.height * 1.1;
-                     const drawX = obs.x - (drawWidth - obs.width) / 2; const drawY = obs.y - (drawHeight - obs.height) / 2;
-                     ctx.drawImage(obs.img, drawX, drawY, drawWidth, drawHeight);
+                obs.x -= obstacleSpeed; // Move obstacle
+
+                // ** NEW: Update obstacle animation frame **
+                obs.frameTimer++;
+                if (obs.frameTimer >= obs.frameDelay) {
+                    obs.frameTimer = 0;
+                    obs.currentFrame = (obs.currentFrame + 1) % obs.frameCount;
+                }
+
+                // ** MODIFIED: Draw obstacle animation frame **
+                if (obs.sheet && obs.sheet.complete && obs.sheet.naturalWidth > 0) {
+                    const sx = obs.currentFrame * obs.frameWidth;
+                    const sy = 0; // Assuming single row spritesheet
+
+                    // Draw using frame dimensions, potentially offset from collision box
+                    const drawWidth = obs.frameWidth;
+                    const drawHeight = obs.frameHeight;
+                    // Center the visual frame over the collision box
+                    const drawX = obs.x + (obs.width - drawWidth) / 2;
+                    const drawY = obs.y + (obs.height - drawHeight); // Align bottom
+
+                    ctx.drawImage(
+                        obs.sheet,
+                        sx, sy, obs.frameWidth, obs.frameHeight, // Source rect (frame)
+                        drawX, drawY, drawWidth, drawHeight    // Destination rect
+                    );
+
+                    // Optional: Draw collision box for debugging
+                    // ctx.strokeStyle = 'red';
+                    // ctx.strokeRect(obs.x, obs.y, obs.width, obs.height);
+
                 } else {
+                    // Fallback: Draw collision box if image not ready
                     ctx.fillStyle = obs.isFlying ? '#888' : '#2a9d8f';
                     ctx.fillRect(obs.x, obs.y, obs.width, obs.height);
                 }
+
+                // Collision detection (uses collision box dimensions: obs.width, obs.height)
                 if ( dino.x < obs.x + obs.width && dino.x + currentDinoWidth > obs.x && currentDinoY < obs.y + obs.height && currentDinoY + currentDinoHeight > obs.y ) {
                     gameOver(); return;
                 }
-                if (obs.x + obs.width < 0) { obstacles.splice(i, 1); }
+
+                // Remove off-screen obstacles
+                if (obs.x + obs.width < 0) { // Use collision width for removal check
+                    obstacles.splice(i, 1);
+                }
+            }
+        }
+
+        // --- Animation Update Function (Dino Only) ---
+        function updateDinoAnimation() { /* ... (same as before) ... */
+            dinoFrameTimer++;
+            const currentAnim = isCrouching ? dinoCrouchAnim : dinoRunAnim;
+            if (dinoFrameTimer >= currentAnim.frameDelay) {
+                dinoFrameTimer = 0;
+                dinoCurrentFrame = (dinoCurrentFrame + 1) % currentAnim.frameCount;
             }
         }
 
         // --- Game Loop ---
-        function gameLoop() { /* ... (no changes needed here) ... */
+        function gameLoop() {
             if (isGameOver || !assetsLoaded) return;
             ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            updateDinoAnimation(); // Update dino animation state
+
             dino.update();
-            dino.draw();
-            if (frameCount >= nextObstacleFrame) {
-                createObstacle();
-                currentBaseSpawnInterval = Math.max(obstacleSpawnIntervalMin, currentBaseSpawnInterval - spawnIntervalDecreaseFactor);
-                const randomOffset = (Math.random() - 0.5) * 2 * spawnIntervalRandomness;
-                const nextInterval = Math.floor(currentBaseSpawnInterval + randomOffset);
-                const clampedInterval = Math.max(obstacleSpawnIntervalMin * 0.6, nextInterval);
-                nextObstacleFrame = frameCount + clampedInterval;
+            dino.draw(); // Draws animated dino
+
+            if (frameCount >= nextObstacleFrame) { /* ... (spawn logic same) ... */
+                 createObstacle();
+                 currentBaseSpawnInterval = Math.max(obstacleSpawnIntervalMin, currentBaseSpawnInterval - spawnIntervalDecreaseFactor);
+                 const randomOffset = (Math.random() - 0.5) * 2 * spawnIntervalRandomness;
+                 const nextInterval = Math.floor(currentBaseSpawnInterval + randomOffset);
+                 const clampedInterval = Math.max(obstacleSpawnIntervalMin * 0.6, nextInterval);
+                 nextObstacleFrame = frameCount + clampedInterval;
             }
-            updateObstacles();
+
+            updateObstacles(); // Updates position AND animation, draws animated obstacles
+
             score++;
             scoreDisplay.textContent = score;
             obstacleSpeed += speedIncreaseFactor;
@@ -399,181 +371,89 @@
 
         // --- Game State Functions ---
          function resizeCanvas() { /* ... (no changes needed here) ... */
-            const container = canvas.parentElement;
-            const newWidth = container.clientWidth;
-            canvas.width = newWidth;
-            canvas.height = fixedCanvasHeight;
-            if (!assetsLoaded) { drawLoadingScreen(); return; }
-            if (gameStarted && !isGameOver) {
-                 dinoY = canvas.height - dino.getCurrentHeight() - groundHeight;
-                 obstacles.forEach(obs => {
-                     if (obs.isFlying) {
-                         const type = obstacleTypes.find(t => t.imgSrc === obs.imgSrc);
-                         const yOffset = type?.yOffset || 35;
-                         obs.y = canvas.height - groundHeight - obs.height - yOffset;
-                         obs.y = Math.max(0, obs.y);
-                     } else { obs.y = canvas.height - obs.height - groundHeight; }
-                 });
-                 ctx.clearRect(0, 0, canvas.width, canvas.height);
-                 dino.draw();
-                 obstacles.forEach(obs => {
-                    if (obs.img && obs.img.complete && obs.img.naturalWidth > 0) {
-                         const drawWidth = obs.width * 1.1; const drawHeight = obs.height * 1.1;
-                         const drawX = obs.x - (drawWidth - obs.width) / 2; const drawY = obs.y - (drawHeight - obs.height) / 2;
-                         ctx.drawImage(obs.img, drawX, drawY, drawWidth, drawHeight);
-                    } else { ctx.fillStyle = obs.isFlying ? '#888' : '#2a9d8f'; ctx.fillRect(obs.x, obs.y, obs.width, obs.height); }
-                 });
-            } else if (!gameStarted) { drawInitialState(); }
-            else if (isGameOver) { drawGameOverState(); }
+             const container = canvas.parentElement; const newWidth = container.clientWidth;
+             canvas.width = newWidth; canvas.height = fixedCanvasHeight;
+             if (!assetsLoaded) { drawLoadingScreen(); return; }
+             if (gameStarted && !isGameOver) {
+                  dinoY = canvas.height - dino.getCurrentHeight() - groundHeight;
+                  obstacles.forEach(obs => {
+                      if (obs.isFlying) { const type = obstacleTypes.find(t => t.imgSrc === obs.imgSrc); const yOffset = type?.yOffset || 35; obs.y = canvas.height - groundHeight - obs.height - yOffset; obs.y = Math.max(0, obs.y); }
+                      else { obs.y = canvas.height - obs.height - groundHeight; }
+                  });
+                  ctx.clearRect(0, 0, canvas.width, canvas.height); dino.draw();
+                  // Redraw obstacles using their current animation frame
+                  obstacles.forEach(obs => {
+                     if (obs.sheet && obs.sheet.complete && obs.sheet.naturalWidth > 0) {
+                          const sx = obs.currentFrame * obs.frameWidth; const sy = 0;
+                          const drawWidth = obs.frameWidth; const drawHeight = obs.frameHeight;
+                          const drawX = obs.x + (obs.width - drawWidth) / 2; const drawY = obs.y + (obs.height - drawHeight);
+                          ctx.drawImage( obs.sheet, sx, sy, obs.frameWidth, obs.frameHeight, drawX, drawY, drawWidth, drawHeight );
+                     } else { ctx.fillStyle = obs.isFlying ? '#888' : '#2a9d8f'; ctx.fillRect(obs.x, obs.y, obs.width, obs.height); }
+                  });
+             } else if (!gameStarted) { drawInitialState(); } else if (isGameOver) { drawGameOverState(); }
          }
-
          function drawLoadingScreen() { /* ... (no changes needed here) ... */
-             ctx.clearRect(0, 0, canvas.width, canvas.height);
-             loadingMessage.style.display = 'block';
-             ctx.fillStyle = '#ccc';
-             ctx.fillRect(canvas.width * 0.3, canvas.height / 2 - 5, canvas.width * 0.4, 10);
+              ctx.clearRect(0, 0, canvas.width, canvas.height); loadingMessage.style.display = 'block';
+              ctx.fillStyle = '#ccc'; ctx.fillRect(canvas.width * 0.3, canvas.height / 2 - 5, canvas.width * 0.4, 10);
          }
-
-        function drawInitialState() { /* ... (no changes needed here) ... */
-            if (!assetsLoaded) return;
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            isCrouching = false; isFastFalling = false; // Reset states
-            dinoY = canvas.height - dino.getCurrentHeight() - groundHeight;
-            dino.draw();
-            ctx.fillStyle = '#555';
-            ctx.font = "12px 'Press Start 2P'";
-            ctx.textAlign = 'center';
-            ctx.fillText("Press SPACE/TAP to Start", canvas.width / 2, canvas.height / 2);
-            loadingMessage.style.display = 'none';
+         function drawInitialState() { /* ... (no changes needed here) ... */
+             if (!assetsLoaded) return; ctx.clearRect(0, 0, canvas.width, canvas.height);
+             isCrouching = false; isFastFalling = false; dinoCurrentFrame = 0; dinoFrameTimer = 0;
+             dinoY = canvas.height - dino.getCurrentHeight() - groundHeight; dino.draw();
+             ctx.fillStyle = '#555'; ctx.font = "12px 'Press Start 2P'"; ctx.textAlign = 'center';
+             ctx.fillText("Press SPACE/TAP to Start", canvas.width / 2, canvas.height / 2); loadingMessage.style.display = 'none';
+         }
+         function drawGameOverState() { /* ... (Draw final obstacle animation frame) ... */
+              if (!assetsLoaded) return; ctx.clearRect(0, 0, canvas.width, canvas.height);
+             const finalDinoHeight = dino.getCurrentHeight(); const finalDinoWidth = dino.getCurrentWidth();
+             const finalDinoY = isCrouching ? canvas.height - finalDinoHeight - groundHeight : dinoY;
+             const currentDinoAnim = isCrouching ? dinoCrouchAnim : dinoRunAnim; const currentDinoSheet = isCrouching ? dinoCrouchSheet : dinoRunSheet;
+             const sxDino = dinoCurrentFrame * currentDinoAnim.frameWidth; const syDino = 0;
+             if (currentDinoSheet && currentDinoSheet.complete && currentDinoSheet.naturalWidth > 0) { const drawWidth = currentDinoAnim.frameWidth; const drawHeight = currentDinoAnim.frameHeight; const drawX = dino.x + (finalDinoWidth - drawWidth) / 2; const drawY = finalDinoY + (finalDinoHeight - drawHeight); ctx.drawImage(currentDinoSheet, sxDino, syDino, currentDinoAnim.frameWidth, currentDinoAnim.frameHeight, drawX, drawY, drawWidth, drawHeight); }
+             else { ctx.fillStyle = '#666'; ctx.fillRect(dino.x, finalDinoY, finalDinoWidth, finalDinoHeight); }
+             obstacles.forEach(obs => {
+                  let finalObsY; const type = obstacleTypes.find(t => t.imgSrc === obs.imgSrc);
+                  if (obs.isFlying) { const yOffset = type?.yOffset || 35; finalObsY = canvas.height - groundHeight - obs.height - yOffset; finalObsY = Math.max(0, finalObsY); }
+                  else { finalObsY = canvas.height - obs.height - groundHeight; }
+                  // Draw final obstacle frame
+                  if (obs.sheet && obs.sheet.complete && obs.sheet.naturalWidth > 0) {
+                       const sxObs = obs.currentFrame * obs.frameWidth; const syObs = 0;
+                       const drawWidth = obs.frameWidth; const drawHeight = obs.frameHeight;
+                       const drawX = obs.x + (obs.width - drawWidth) / 2; const drawY = finalObsY + (obs.height - drawHeight);
+                       ctx.drawImage( obs.sheet, sxObs, syObs, obs.frameWidth, obs.frameHeight, drawX, drawY, drawWidth, drawHeight );
+                  } else { ctx.fillStyle = obs.isFlying ? '#888' : '#2a9d8f'; ctx.fillRect(obs.x, finalObsY, obs.width, obs.height); }
+             });
+         }
+        function startGame() { /* ... (no changes needed here) ... */
+             if (gameStarted && !isGameOver) return; if (!assetsLoaded) { console.log("Assets not loaded yet."); return; }
+             score = 0; frameCount = 0; obstacles = []; obstacleSpeed = obstacleSpeedStart;
+             currentBaseSpawnInterval = obstacleSpawnIntervalStart; const firstRandomOffset = (Math.random() - 0.5) * 2 * spawnIntervalRandomness; nextObstacleFrame = Math.floor(currentBaseSpawnInterval + firstRandomOffset);
+             isCrouching = false; isFastFalling = false; dinoCurrentFrame = 0; dinoFrameTimer = 0;
+             dinoY = canvas.height - dino.getCurrentHeight() - groundHeight; dinoVelocityY = 0; isGameOver = false; gameStarted = true;
+             scoreDisplay.textContent = score; guestScoreDisplay.textContent = score; messageOverlay.classList.remove('visible'); saveScoreButton.classList.add('hidden'); loadingMessage.style.display = 'none';
+             highScore = localStorage.getItem('dinoHighScore') || 0; highScoreDisplay.textContent = highScore; gameLoop();
         }
-
-        function drawGameOverState() { /* ... (no changes needed here) ... */
-             if (!assetsLoaded) return;
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            const finalDinoHeight = dino.getCurrentHeight();
-            const finalDinoWidth = dino.getCurrentWidth();
-            const finalDinoY = isCrouching ? canvas.height - finalDinoHeight - groundHeight : dinoY;
-            const imgToDraw = isCrouching ? dinoImgCrouching : dinoImgStanding;
-            if (imgToDraw && imgToDraw.complete && imgToDraw.naturalWidth > 0) {
-                ctx.drawImage(imgToDraw, dino.x, finalDinoY, finalDinoWidth, finalDinoHeight);
-            } else { ctx.fillStyle = '#666'; ctx.fillRect(dino.x, finalDinoY, finalDinoWidth, finalDinoHeight); }
-            obstacles.forEach(obs => {
-                 let finalObsY;
-                 const type = obstacleTypes.find(t => t.imgSrc === obs.imgSrc);
-                 if (obs.isFlying) {
-                     const yOffset = type?.yOffset || 35;
-                     finalObsY = canvas.height - groundHeight - obs.height - yOffset;
-                     finalObsY = Math.max(0, finalObsY);
-                 } else { finalObsY = canvas.height - obs.height - groundHeight; }
-                 if (obs.img && obs.img.complete && obs.img.naturalWidth > 0) {
-                     const drawWidth = obs.width * 1.1; const drawHeight = obs.height * 1.1;
-                     const drawX = obs.x - (drawWidth - obs.width) / 2; const drawY = finalObsY - (drawHeight - obs.height) / 2;
-                     ctx.drawImage(obs.img, drawX, drawY, drawWidth, drawHeight);
-                 } else { ctx.fillStyle = obs.isFlying ? '#888' : '#2a9d8f'; ctx.fillRect(obs.x, finalObsY, obs.width, obs.height); }
-            });
-        }
-
-
-        function startGame() { /* ... (reset fast fall state) ... */
-            if (gameStarted && !isGameOver) return;
-            if (!assetsLoaded) { console.log("Assets not loaded yet."); return; }
-            score = 0;
-            frameCount = 0;
-            obstacles = [];
-            obstacleSpeed = obstacleSpeedStart;
-            currentBaseSpawnInterval = obstacleSpawnIntervalStart;
-            const firstRandomOffset = (Math.random() - 0.5) * 2 * spawnIntervalRandomness;
-            nextObstacleFrame = Math.floor(currentBaseSpawnInterval + firstRandomOffset);
-            isCrouching = false; isFastFalling = false; // Reset states
-            dinoY = canvas.height - dino.getCurrentHeight() - groundHeight;
-            dinoVelocityY = 0;
-            isGameOver = false;
-            gameStarted = true;
-            scoreDisplay.textContent = score;
-            guestScoreDisplay.textContent = score;
-            messageOverlay.classList.remove('visible');
-            saveScoreButton.classList.add('hidden');
-            loadingMessage.style.display = 'none';
-            highScore = localStorage.getItem('dinoHighScore') || 0;
-            highScoreDisplay.textContent = highScore;
-            gameLoop();
-        }
-
         function gameOver() { /* ... (no changes needed here) ... */
-            isGameOver = true;
-            isFastFalling = false; // Stop fast fall on game over
-            if (score > highScore) { highScore = score; localStorage.setItem('dinoHighScore', highScore); highScoreDisplay.textContent = highScore; }
-            guestScoreDisplay.textContent = score;
-            messageText.textContent = `Game Over! Score: ${score}`;
-            drawGameOverState();
-            messageOverlay.classList.add('visible');
-            if (isLoggedIn) { saveScoreButton.classList.remove('hidden'); } else { saveScoreButton.classList.add('hidden'); }
+             isGameOver = true; isFastFalling = false;
+             if (score > highScore) { highScore = score; localStorage.setItem('dinoHighScore', highScore); highScoreDisplay.textContent = highScore; }
+             guestScoreDisplay.textContent = score; messageText.textContent = `Game Over! Score: ${score}`; drawGameOverState(); messageOverlay.classList.add('visible');
+             if (isLoggedIn) { saveScoreButton.classList.remove('hidden'); } else { saveScoreButton.classList.add('hidden'); }
         }
 
         // --- Placeholder Functions for Backend Interaction ---
         /* ... (no changes needed here) ... */
-        function handleSignIn() { console.log("Sign In button clicked - Placeholder"); isLoggedIn = true; alert("Placeholder: You are now 'signed in'. If you get a game over, you'll see the option to save your score."); signInButton.textContent = "Sign Out"; signUpButton.style.display = 'none'; saveScoreButton.classList.add('hidden'); fetchLeaderboard(); }
-        function handleSignOut() { console.log("Sign Out button clicked - Placeholder"); isLoggedIn = false; alert("Placeholder: You have been 'signed out'."); signInButton.textContent = "Sign In"; signUpButton.style.display = 'inline-block'; saveScoreButton.classList.add('hidden'); loadDummyLeaderboard(); }
-        function handleSignUp() { console.log("Sign Up button clicked - Placeholder"); alert("Placeholder: Sign Up functionality not implemented."); }
-        function saveHighScore(currentScore) { if (!isLoggedIn) { console.log("User not logged in."); alert("Please sign in to save your score!"); saveScoreButton.classList.add('hidden'); return; } console.log(`Placeholder: Attempting to save score ${currentScore}...`); alert(`Placeholder: Score ${currentScore} would be saved.`); saveScoreButton.classList.add('hidden'); fetchLeaderboard(); }
-        function fetchLeaderboard() { console.log("Placeholder: Fetching leaderboard..."); const localHighScore = localStorage.getItem('dinoHighScore') || 0; const dummyData = [ { name: 'ServerPlayer1', score: 2100 }, { name: 'ServerPlayer2', score: 1850 }, { name: 'TopDino', score: 1700 }, ...(isLoggedIn && localHighScore > 0 ? [{ name: 'You', score: localHighScore }] : []), ].sort((a, b) => b.score - a.score); renderLeaderboard(dummyData); }
-        function loadDummyLeaderboard() { const localHighScore = localStorage.getItem('dinoHighScore') || 0; const dummyData = [ { name: 'Player1', score: 1500 }, { name: 'Player2', score: 1250 }, { name: 'Player3', score: 1100 }, { name: 'You (Guest)', score: localHighScore }, ].sort((a, b) => b.score - a.score); renderLeaderboard(dummyData); }
-        function renderLeaderboard(data) { leaderboardList.innerHTML = ''; if (!data || data.length === 0) { leaderboardList.innerHTML = '<li>No scores yet!</li>'; return; } const filteredData = isLoggedIn ? data.filter(entry => entry.name !== 'You (Guest)') : data; filteredData.forEach(entry => { const li = document.createElement('li'); const nameSpan = document.createElement('span'); const scoreSpan = document.createElement('span'); nameSpan.textContent = entry.name; scoreSpan.textContent = entry.score; li.appendChild(nameSpan); li.appendChild(scoreSpan); leaderboardList.appendChild(li); }); }
-
+        function handleSignIn() { console.log("Sign In button clicked - Placeholder"); isLoggedIn = true; alert("Placeholder: You are now 'signed in'. If you get a game over, you'll see the option to save your score."); signInButton.textContent = "Sign Out"; signUpButton.style.display = 'none'; saveScoreButton.classList.add('hidden'); fetchLeaderboard(); } function handleSignOut() { console.log("Sign Out button clicked - Placeholder"); isLoggedIn = false; alert("Placeholder: You have been 'signed out'."); signInButton.textContent = "Sign In"; signUpButton.style.display = 'inline-block'; saveScoreButton.classList.add('hidden'); loadDummyLeaderboard(); } function handleSignUp() { console.log("Sign Up button clicked - Placeholder"); alert("Placeholder: Sign Up functionality not implemented."); } function saveHighScore(currentScore) { if (!isLoggedIn) { console.log("User not logged in."); alert("Please sign in to save your score!"); saveScoreButton.classList.add('hidden'); return; } console.log(`Placeholder: Attempting to save score ${currentScore}...`); alert(`Placeholder: Score ${currentScore} would be saved.`); saveScoreButton.classList.add('hidden'); fetchLeaderboard(); } function fetchLeaderboard() { console.log("Placeholder: Fetching leaderboard..."); const localHighScore = localStorage.getItem('dinoHighScore') || 0; const dummyData = [ { name: 'ServerPlayer1', score: 2100 }, { name: 'ServerPlayer2', score: 1850 }, { name: 'TopDino', score: 1700 }, ...(isLoggedIn && localHighScore > 0 ? [{ name: 'You', score: localHighScore }] : []), ].sort((a, b) => b.score - a.score); renderLeaderboard(dummyData); } function loadDummyLeaderboard() { const localHighScore = localStorage.getItem('dinoHighScore') || 0; const dummyData = [ { name: 'Player1', score: 1500 }, { name: 'Player2', score: 1250 }, { name: 'Player3', score: 1100 }, { name: 'You (Guest)', score: localHighScore }, ].sort((a, b) => b.score - a.score); renderLeaderboard(dummyData); } function renderLeaderboard(data) { leaderboardList.innerHTML = ''; if (!data || data.length === 0) { leaderboardList.innerHTML = '<li>No scores yet!</li>'; return; } const filteredData = isLoggedIn ? data.filter(entry => entry.name !== 'You (Guest)') : data; filteredData.forEach(entry => { const li = document.createElement('li'); const nameSpan = document.createElement('span'); const scoreSpan = document.createElement('span'); nameSpan.textContent = entry.name; scoreSpan.textContent = entry.score; li.appendChild(nameSpan); li.appendChild(scoreSpan); leaderboardList.appendChild(li); }); }
 
         // --- Event Listeners ---
-        document.addEventListener('keydown', (e) => {
-            if (isGameOver) { if (e.code === 'Space' || e.key === 'ArrowUp') { e.preventDefault(); startGame(); } return; }
-            if (!assetsLoaded) return;
-            switch (e.code) {
-                case 'Space': case 'ArrowUp': e.preventDefault(); if (!gameStarted) startGame(); else dino.jump(); break;
-                // ** MODIFIED: Call handleDownAction **
-                case 'ArrowDown': e.preventDefault(); if (gameStarted) dino.handleDownAction(); break;
-            }
-        });
-
-        document.addEventListener('keyup', (e) => {
-            if (isGameOver || !assetsLoaded) return;
-             // ** MODIFIED: Call handleUpAction **
-            if (e.code === 'ArrowDown') {
-                e.preventDefault();
-                 if (gameStarted) dino.handleUpAction();
-            }
-        });
-
-         canvas.addEventListener('touchstart', (e) => {
-             e.preventDefault();
-             if (!assetsLoaded) return;
-             if (!gameStarted) startGame();
-             else if (!isGameOver) dino.jump();
-             else startGame();
-         }, { passive: false });
-         messageOverlay.addEventListener('touchstart', (e) => {
-             if (e.target === restartButton) { e.preventDefault(); startGame(); }
-             else if (e.target === messageOverlay) { e.preventDefault(); }
-         }, { passive: false });
-        restartButton.addEventListener('click', () => { if(assetsLoaded) startGame(); });
-        window.addEventListener('resize', resizeCanvas);
-        signInButton.addEventListener('click', () => { if (isLoggedIn) handleSignOut(); else handleSignIn(); });
-        signUpButton.addEventListener('click', handleSignUp);
-        saveScoreButton.addEventListener('click', () => saveHighScore(score));
+        /* ... (no changes needed here) ... */
+         document.addEventListener('keydown', (e) => { if (isGameOver) { if (e.code === 'Space' || e.key === 'ArrowUp') { e.preventDefault(); startGame(); } return; } if (!assetsLoaded) return; switch (e.code) { case 'Space': case 'ArrowUp': e.preventDefault(); if (!gameStarted) startGame(); else dino.jump(); break; case 'ArrowDown': e.preventDefault(); if (gameStarted) dino.handleDownAction(); break; } }); document.addEventListener('keyup', (e) => { if (isGameOver || !assetsLoaded) return; if (e.code === 'ArrowDown') { e.preventDefault(); if (gameStarted) dino.handleUpAction(); } }); canvas.addEventListener('touchstart', (e) => { e.preventDefault(); if (!assetsLoaded) return; if (!gameStarted) startGame(); else if (!isGameOver) dino.jump(); else startGame(); }, { passive: false }); messageOverlay.addEventListener('touchstart', (e) => { if (e.target === restartButton) { e.preventDefault(); startGame(); } else if (e.target === messageOverlay) { e.preventDefault(); } }, { passive: false }); restartButton.addEventListener('click', () => { if(assetsLoaded) startGame(); }); window.addEventListener('resize', resizeCanvas); signInButton.addEventListener('click', () => { if (isLoggedIn) handleSignOut(); else handleSignIn(); }); signUpButton.addEventListener('click', handleSignUp); saveScoreButton.addEventListener('click', () => saveHighScore(score));
 
         // --- Initial Setup ---
-        preloadAssets().then(() => {
-            console.log("Assets loaded!");
-            assetsLoaded = true;
-            loadingMessage.style.display = 'none';
-            resizeCanvas();
-            highScore = localStorage.getItem('dinoHighScore') || 0;
-            highScoreDisplay.textContent = highScore;
-            loadDummyLeaderboard();
-        }).catch(error => {
-            console.error("Error loading assets:", error);
-            loadingMessage.textContent = "Error loading assets. Please refresh.";
-            resizeCanvas();
-        });
-         resizeCanvas();
-         drawLoadingScreen();
+        preloadAssets().then(() => { /* ... (no changes needed here) ... */
+            console.log("Assets loaded!"); assetsLoaded = true; loadingMessage.style.display = 'none';
+            resizeCanvas(); highScore = localStorage.getItem('dinoHighScore') || 0; highScoreDisplay.textContent = highScore; loadDummyLeaderboard();
+        }).catch(error => { console.error("Error loading assets:", error); loadingMessage.textContent = "Error loading assets. Please refresh."; resizeCanvas(); });
+         resizeCanvas(); drawLoadingScreen();
 
     </script>
 
