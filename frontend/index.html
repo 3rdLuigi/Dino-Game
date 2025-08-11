@@ -11,9 +11,19 @@
     rel="stylesheet"
   />
 
-  <link rel="stylesheet" href="css/styles.css" />
+  <link rel="stylesheet" href="assets/styles/styles.css" />
 </head>
 <body class="bg-gray-100 p-5 flex flex-col items-center min-h-screen">
+
+
+  <div class="w-full flex justify-end max-w-md mb-2">
+    <label for="themeSelect" class="mr-2 game-font text-sm text-gray-600">Theme:</label>
+    <select id="themeSelect" class="game-font text-sm px-2 py-1 rounded border border-gray-300">
+      <option value="light">Light</option>
+      <option value="dark">Dark</option>
+      <option value="retro">Retro</option>
+    </select>
+  </div>
 
   <h1 class="text-3xl mb-4 game-font text-gray-700">Dino Run</h1>
 
@@ -51,6 +61,6 @@
 
   </div>
 
-  <script src="js/game.js"></script>
+  <script type="module" src="assets/scripts/gamelogic.js"></script>
 </body>
 </html>

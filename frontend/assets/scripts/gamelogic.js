@@ -1,5 +1,25 @@
 document.addEventListener('DOMContentLoaded', function() {
 
+    // --- Theme Switcher ---
+    const themeSelect = document.getElementById('themeSelect');
+    const body = document.body;
+    function setTheme(theme) {
+        body.classList.remove('theme-light', 'theme-dark', 'theme-retro');
+        if (theme === 'dark') {
+            body.classList.add('theme-dark');
+        } else if (theme === 'retro') {
+            body.classList.add('theme-retro');
+        } else {
+            body.classList.add('theme-light');
+        }
+    }
+    if (themeSelect) {
+        themeSelect.addEventListener('change', function() {
+            setTheme(this.value);
+        });
+        setTheme(themeSelect.value); // Set initial theme
+    }
+
         // --- DOM Elements ---
         const canvas = document.getElementById('gameCanvas');
         const ctx = canvas.getContext('2d');
@@ -57,7 +77,11 @@ document.addEventListener('DOMContentLoaded', function() {
         const spawnIntervalDecreaseFactor = 0.05;
 
         // --- Game State ---
-        let dinoY, dinoVelocityY;
+    let dinoY, dinoVelocityY;
+    let isUpKeyHeld = false; // Track if up key is held
+    const jumpHoldForce = -0.1; 
+    const maxJumpHoldFrames = 5; 
+    let jumpHoldFrames = 0;
         let score, highScore;
         let obstacles;
         let frameCount;
@@ -68,7 +92,7 @@ document.addEventListener('DOMContentLoaded', function() {
         let gameStarted = false;
         let isLoggedIn = false;
         let isCrouching = false;
-        let isFastFalling = false; // ** NEW: Track fast fall state **
+        let isFastFalling = false; 
         let assetsLoaded = false;
 
         // --- Asset Preloading Function ---
@@ -117,11 +141,18 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (!isCrouching && dinoY >= canvas.height - this.getCurrentHeight() - groundHeight - 1) {
                     dinoVelocityY = jumpStrength;
                     isFastFalling = false; // Reset fast fall on jump
+                    jumpHoldFrames = 0;
                 }
             },
             update() {
                 // Apply gravity - increase if fast falling
                 const currentGravity = isFastFalling ? gravity * fastFallGravityMultiplier : gravity;
+
+                // Variable jump: apply extra upward force if up key is held and dino is still moving up
+                if (isUpKeyHeld && dinoVelocityY < 0 && jumpHoldFrames < maxJumpHoldFrames) {
+                    dinoVelocityY += jumpHoldForce;
+                    jumpHoldFrames++;
+                }
 
                 // Apply gravity only if not crouching on the ground
                 if (!isCrouching || dinoY < canvas.height - this.getCurrentHeight() - groundHeight) {
@@ -135,8 +166,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     dinoY = canvas.height - currentHeight - groundHeight;
                     dinoVelocityY = 0;
                     isFastFalling = false; // Stop fast fall on ground hit
-                    // If down key is still held, stay crouched
-                    // isCrouching = ??? // Handled by keyup/keydown
+                    jumpHoldFrames = 0; // Reset jump hold
                 }
                 // Ceiling collision (optional)
                 if (dinoY < 0) {
@@ -144,14 +174,12 @@ document.addEventListener('DOMContentLoaded', function() {
                     dinoVelocityY = 0; // Stop upward movement if hitting ceiling
                 }
             },
-            // ** MODIFIED: Handle Crouch / Fast Fall trigger **
             handleDownAction() {
                 // Check if dino is in the air (not on the ground)
                  if (dinoY < canvas.height - this.getCurrentHeight() - groundHeight - 1) {
                     // If in air and not already fast falling, initiate fast fall
                     if (!isFastFalling) {
                          isFastFalling = true;
-                         // Optional: Give a small initial downward boost
                          // dinoVelocityY = Math.max(dinoVelocityY, 1); // Ensure some downward speed
                     }
                  } else {
@@ -162,7 +190,6 @@ document.addEventListener('DOMContentLoaded', function() {
                      }
                  }
             },
-            // ** MODIFIED: Handle stopping crouch / fast fall **
             handleUpAction() {
                  // Stop crouching if currently crouching
                  if (isCrouching) {
@@ -174,7 +201,7 @@ document.addEventListener('DOMContentLoaded', function() {
         };
 
         // --- Obstacle Functions ---
-        function createObstacle() { /* ... (no changes needed here) ... */
+        function createObstacle() { 
             const typeIndex = Math.floor(Math.random() * obstacleTypes.length);
             const selectedType = obstacleTypes[typeIndex];
             const count = selectedType.count || 1;
@@ -198,7 +225,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         }
 
-        function updateObstacles() { /* ... (no changes needed here) ... */
+        function updateObstacles() { 
             const currentDinoHeight = dino.getCurrentHeight();
             const currentDinoWidth = dino.getCurrentWidth();
             const currentDinoY = isCrouching ? canvas.height - currentDinoHeight - groundHeight : dinoY;
@@ -221,7 +248,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
 
         // --- Game Loop ---
-        function gameLoop() { /* ... (no changes needed here) ... */
+        function gameLoop() { 
             if (isGameOver || !assetsLoaded) return;
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             dino.update();
@@ -243,7 +270,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
 
         // --- Game State Functions ---
-         function resizeCanvas() { /* ... (no changes needed here) ... */
+         function resizeCanvas() { 
             const container = canvas.parentElement;
             const newWidth = container.clientWidth;
             canvas.width = newWidth;
@@ -272,14 +299,14 @@ document.addEventListener('DOMContentLoaded', function() {
             else if (isGameOver) { drawGameOverState(); }
          }
 
-         function drawLoadingScreen() { /* ... (no changes needed here) ... */
+         function drawLoadingScreen() { 
              ctx.clearRect(0, 0, canvas.width, canvas.height);
              loadingMessage.style.display = 'block';
              ctx.fillStyle = '#ccc';
              ctx.fillRect(canvas.width * 0.3, canvas.height / 2 - 5, canvas.width * 0.4, 10);
          }
 
-        function drawInitialState() { /* ... (no changes needed here) ... */
+        function drawInitialState() {
             if (!assetsLoaded) return;
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             isCrouching = false; isFastFalling = false; // Reset states
@@ -292,7 +319,7 @@ document.addEventListener('DOMContentLoaded', function() {
             loadingMessage.style.display = 'none';
         }
 
-        function drawGameOverState() { /* ... (no changes needed here) ... */
+        function drawGameOverState() {
              if (!assetsLoaded) return;
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             const finalDinoHeight = dino.getCurrentHeight();
@@ -344,7 +371,7 @@ document.addEventListener('DOMContentLoaded', function() {
             gameLoop();
         }
 
-        function gameOver() { /* ... (no changes needed here) ... */
+        function gameOver() { 
             isGameOver = true;
             isFastFalling = false; // Stop fast fall on game over
             if (score > highScore) { highScore = score; localStorage.setItem('dinoHighScore', highScore); highScoreDisplay.textContent = highScore; }
@@ -355,8 +382,7 @@ document.addEventListener('DOMContentLoaded', function() {
             if (isLoggedIn) { saveScoreButton.classList.remove('hidden'); } else { saveScoreButton.classList.add('hidden'); }
         }
 
-        // --- Placeholder Functions for Backend Interaction ---
-        /* ... (no changes needed here) ... */
+        //Functions for Backend Interaction ---
         function handleSignIn() { console.log("Sign In button clicked - Placeholder"); isLoggedIn = true; alert("Placeholder: You are now 'signed in'. If you get a game over, you'll see the option to save your score."); signInButton.textContent = "Sign Out"; signUpButton.style.display = 'none'; saveScoreButton.classList.add('hidden'); fetchLeaderboard(); }
         function handleSignOut() { console.log("Sign Out button clicked - Placeholder"); isLoggedIn = false; alert("Placeholder: You have been 'signed out'."); signInButton.textContent = "Sign In"; signUpButton.style.display = 'inline-block'; saveScoreButton.classList.add('hidden'); loadDummyLeaderboard(); }
         function handleSignUp() { console.log("Sign Up button clicked - Placeholder"); alert("Placeholder: Sign Up functionality not implemented."); }
@@ -371,7 +397,12 @@ document.addEventListener('DOMContentLoaded', function() {
             if (isGameOver) { if (e.code === 'Space' || e.key === 'ArrowUp') { e.preventDefault(); startGame(); } return; }
             if (!assetsLoaded) return;
             switch (e.code) {
-                case 'Space': case 'ArrowUp': e.preventDefault(); if (!gameStarted) startGame(); else dino.jump(); break;
+                case 'Space': case 'ArrowUp':
+                    e.preventDefault();
+                    isUpKeyHeld = true;
+                    if (!gameStarted) startGame();
+                    else dino.jump();
+                    break;
                 // ** MODIFIED: Call handleDownAction **
                 case 'ArrowDown': e.preventDefault(); if (gameStarted) dino.handleDownAction(); break;
             }
@@ -379,10 +410,13 @@ document.addEventListener('DOMContentLoaded', function() {
 
         document.addEventListener('keyup', (e) => {
             if (isGameOver || !assetsLoaded) return;
-             // ** MODIFIED: Call handleUpAction **
+            if (e.code === 'ArrowUp' || e.code === 'Space') {
+                isUpKeyHeld = false;
+            }
+            // ** MODIFIED: Call handleUpAction **
             if (e.code === 'ArrowDown') {
                 e.preventDefault();
-                 if (gameStarted) dino.handleUpAction();
+                if (gameStarted) dino.handleUpAction();
             }
         });
 
